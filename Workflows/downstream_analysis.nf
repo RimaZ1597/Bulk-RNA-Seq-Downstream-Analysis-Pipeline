@@ -36,6 +36,6 @@ workflow {
     
     // Output information
     PATHWAY_ANALYSIS.out.log.view { log_file ->
-        "✅ Complete downstream analysis finished for study: ${params.study_name}"
+        "Complete downstream analysis finished for study: ${params.study_name}"
     }
 }
