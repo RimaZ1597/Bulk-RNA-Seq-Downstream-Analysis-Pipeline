@@ -3,7 +3,7 @@ This pipeline performs reproducible RNA-Seq downstream analysis using DESeq2 wit
 
 ____
 
-# Features
+#### Features
 
 📦 Containerised with Docker/Singularity
 
