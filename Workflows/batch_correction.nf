@@ -20,6 +20,6 @@ workflow {
     
     // Output information
     COMBAT_SEQ.out.log.view { log_file ->
-        "✅ ComBat-seq batch correction completed for study: ${params.study_name}"
+        "ComBat-seq batch correction completed for study: ${params.study_name}"
     }
 }
