@@ -5,3 +5,7 @@ This pipeline performs reproducible RNA-Seq downstream analysis using DESeq2 wit
 
 <img width="939" height="450" alt="workflow" src="https://github.com/user-attachments/assets/27122fcd-363c-40b9-a1e0-47ea18e63cc1" />
 
+# Run Pipeline Using Interactive Setup
+
+python interactive_setup.py
+nextflow run main.nf -c nextflow.config --config_file config_summary.txt
