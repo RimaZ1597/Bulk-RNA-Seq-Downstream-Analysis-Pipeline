@@ -21,14 +21,14 @@ def detect_multi_dataset_structure():
     }
     data_dir = Path("data")
     if not data_dir.exists():
-        print("❌ Data directory not found")
+        print(" Data directory not found")
         return data_info
     
     # Look for study directories
     study_dirs = [d for d in data_dir.iterdir() if d.is_dir()]
     for study_dir in study_dirs:
         study_name = study_dir.name
-        print(f"\n📁 Checking study: {study_name}")
+        print(f"\n Checking study: {study_name}")
         study_info = {
             'path': str(study_dir),
             'count_files': [],
@@ -63,13 +63,13 @@ def detect_multi_dataset_structure():
         if study_info['count_files'] and study_info['metadata_files']:
             study_info['valid'] = True
             data_info['datasets_found'] += 1
-            print(f"   ✅ Valid study found:")
+            print(f"    Valid study found:")
             print(f"      Count files: {len(study_info['count_files'])}")
             print(f"      Metadata files: {len(study_info['metadata_files'])}")
             if study_info['cleaned_metadata']:
-                print(f"      Cleaned metadata: ✅")
+                print(f"      Cleaned metadata: ")
         else:
-            print(f"   ❌ Invalid study (missing count or metadata files)")
+            print(f"   Invalid study (missing count or metadata files)")
         
         data_info['studies'][study_name] = study_info
     
@@ -79,7 +79,7 @@ def select_dataset(data_info):
     """Let user select which dataset to analyze"""
     valid_studies = {name: info for name, info in data_info['studies'].items() if info['valid']}
     if not valid_studies:
-        print("❌ No valid datasets found")
+        print(" No valid datasets found")
         return None
     
     print(f"\n=== DATASET SELECTION ===")
@@ -89,16 +89,16 @@ def select_dataset(data_info):
     for i, study_name in enumerate(study_list):
         info = valid_studies[study_name]
         print(f"   {i+1}) {study_name}")
-        print(f"      📁 Path: {info['path']}")
-        print(f"      📊 Count files: {len(info['count_files'])}")
-        print(f"      📋 Metadata files: {len(info['metadata_files'])}")
+        print(f"      Path: {info['path']}")
+        print(f"      Count files: {len(info['count_files'])}")
+        print(f"      Metadata files: {len(info['metadata_files'])}")
         if info['cleaned_metadata']:
-            print(f"      🧹 Cleaned metadata: Available")
+            print(f"      Cleaned metadata: Available")
         print()
     
     if len(study_list) == 1:
         selected_study = study_list[0]
-        print(f"✅ Using dataset: {selected_study}")
+        print(f"Using dataset: {selected_study}")
     else:
         while True:
             try:
@@ -106,12 +106,12 @@ def select_dataset(data_info):
                 choice_idx = int(choice) - 1
                 if 0 <= choice_idx < len(study_list):
                     selected_study = study_list[choice_idx]
-                    print(f"✅ Selected dataset: {selected_study}")
+                    print(f" Selected dataset: {selected_study}")
                     break
                 else:
-                    print("❌ Invalid choice, please try again")
+                    print("Invalid choice, please try again")
             except ValueError:
-                print("❌ Please enter a number")
+                print("Please enter a number")
     
     return selected_study, valid_studies[selected_study]
 
@@ -123,7 +123,7 @@ def select_files_for_study(study_info):
     count_files = study_info['count_files']
     if len(count_files) == 1:
         selected_files['counts'] = count_files[0]
-        print(f"✅ Using count file: {Path(selected_files['counts']).name}")
+        print(f" Using count file: {Path(selected_files['counts']).name}")
     else:
         print("\nAvailable count files:")
         for i, f in enumerate(count_files):
@@ -138,7 +138,7 @@ def select_files_for_study(study_info):
         if use_cleaned.lower() == 'y':
             selected_files['metadata'] = study_info['cleaned_metadata']
             selected_files['metadata_type'] = 'cleaned'
-            print("✅ Using cleaned metadata")
+            print(" Using cleaned metadata")
         else:
             selected_files['metadata'] = select_original_metadata(study_info['metadata_files'])
             selected_files['metadata_type'] = 'original'
@@ -152,7 +152,7 @@ def select_original_metadata(metadata_files):
     """Select from original metadata files"""
     if len(metadata_files) == 1:
         selected_file = metadata_files[0]
-        print(f"✅ Using metadata file: {Path(selected_file).name}")
+        print(f" Using metadata file: {Path(selected_file).name}")
     else:
         print("\nAvailable metadata files:")
         for i, f in enumerate(metadata_files):
@@ -179,17 +179,17 @@ def validate_sample_matching(count_file, metadata_file, sample_id_column):
     missing_in_counts = set(meta_samples) - set(count_samples)
     missing_in_metadata = set(count_samples) - set(meta_samples)
     
-    print(f"✅ Count matrix samples: {len(count_samples)}")
-    print(f"✅ Metadata samples: {len(meta_samples)}")
-    print(f"✅ Common samples: {len(common_samples)}")
+    print(f" Count matrix samples: {len(count_samples)}")
+    print(f" Metadata samples: {len(meta_samples)}")
+    print(f" Common samples: {len(common_samples)}")
     
     if missing_in_counts:
-        print(f"⚠️  Samples in metadata but not in counts: {len(missing_in_counts)}")
+        print(f" Samples in metadata but not in counts: {len(missing_in_counts)}")
     if missing_in_metadata:
-        print(f"⚠️  Samples in counts but not in metadata: {len(missing_in_metadata)}")
+        print(f" Samples in counts but not in metadata: {len(missing_in_metadata)}")
     
     if len(common_samples) == 0:
-        print("❌ No matching samples found!")
+        print(" No matching samples found!")
         return False
     
     return True
@@ -210,11 +210,11 @@ def analyze_metadata(metadata_file):
             continue
     
     if df is None:
-        print("❌ Could not read metadata file")
+        print(" Could not read metadata file")
         return None, None
     
-    print(f"✅ Detected {len(df.columns)} columns in metadata")
-    print(f"✅ Loaded {len(df)} samples")
+    print(f" Detected {len(df.columns)} columns in metadata")
+    print(f" Loaded {len(df)} samples")
     
     # Show column information
     metadata_info = {}
@@ -267,7 +267,7 @@ def interactive_column_deletion(metadata_df, metadata_info):
     choice = input("\nSelect deletion method (1/2/3/4/0): ")
     
     if choice == '0':
-        print("🚪 Exiting setup...")
+        print(" Exiting setup...")
         exit(0)
     
     if choice == '1':
@@ -335,12 +335,12 @@ def interactive_column_deletion(metadata_df, metadata_info):
     
     elif choice == '4':
         # No deletion
-        print("✅ Keeping all columns")
+        print("Keeping all columns")
         columns_to_delete = []
     
     # Confirm deletion
     if columns_to_delete:
-        print(f"\n📋 Columns selected for deletion ({len(columns_to_delete)}):")
+        print(f"\n Columns selected for deletion ({len(columns_to_delete)}):")
         for col in columns_to_delete:
             print(f"   - {col}")
         
@@ -354,8 +354,8 @@ def interactive_column_deletion(metadata_df, metadata_info):
             cleaned_metadata_info = {col: info for col, info in metadata_info.items()
                                    if col not in columns_to_delete}
             
-            print(f"✅ Deleted {len(columns_to_delete)} columns")
-            print(f"✅ Remaining columns: {len(cleaned_df.columns)}")
+            print(f" Deleted {len(columns_to_delete)} columns")
+            print(f" Remaining columns: {len(cleaned_df.columns)}")
             
             # Show remaining columns
             print("\nRemaining columns:")
@@ -364,7 +364,7 @@ def interactive_column_deletion(metadata_df, metadata_info):
             
             return cleaned_metadata_info, cleaned_df, columns_to_delete
         else:
-            print("❌ Column deletion cancelled")
+            print(" Column deletion cancelled")
             return metadata_info, metadata_df, []
     else:
         return metadata_info, metadata_df, []
@@ -395,8 +395,8 @@ def save_cleaned_metadata(cleaned_df, original_file, deleted_columns, study_path
     with open(cleaned_dir / "deletion_log.yaml", 'w') as f:
         yaml.safe_dump(deletion_log, f, default_flow_style=False)
     
-    print(f"✅ Cleaned metadata saved to: {cleaned_filename}")
-    print(f"✅ Deletion log saved to: {cleaned_dir / 'deletion_log.yaml'}")
+    print(f" Cleaned metadata saved to: {cleaned_filename}")
+    print(f" Deletion log saved to: {cleaned_dir / 'deletion_log.yaml'}")
     
     return str(cleaned_filename)
 
@@ -551,7 +551,7 @@ def select_specific_comparisons(comparisons):
         print("\nSmall number of comparisons - proceeding with all.")
         return comparisons
     
-    print(f"\n⚠️  Large number of comparisons ({len(comparisons)}) detected!")
+    print(f"\n Large number of comparisons ({len(comparisons)}) detected!")
     print("Options:")
     print("   1) Use all comparisons")
     print("   2) Select specific comparisons by number")
@@ -561,17 +561,17 @@ def select_specific_comparisons(comparisons):
     choice = input("Choose option (1/2/3/0): ").strip()
     
     if choice == '0':
-        print("🚪 Exiting setup...")
+        print(" Exiting setup...")
         exit(0)
     elif choice == '1':
-        print("✅ Using all comparisons")
+        print(" Using all comparisons")
         return comparisons
     elif choice == '2':
         return select_by_numbers(comparisons)
     elif choice == '3':
         return select_by_range(comparisons)
     else:
-        print("❌ Invalid choice, using all comparisons")
+        print(" Invalid choice, using all comparisons")
         return comparisons
 
 def select_by_numbers(comparisons):
@@ -594,7 +594,7 @@ def select_by_numbers(comparisons):
             # Validate numbers
             invalid_numbers = [n for n in numbers if n < 1 or n > len(comparisons)]
             if invalid_numbers:
-                print(f"❌ Invalid numbers: {invalid_numbers}")
+                print(f" Invalid numbers: {invalid_numbers}")
                 print(f"   Valid range: 1-{len(comparisons)}")
                 continue
             
@@ -604,7 +604,7 @@ def select_by_numbers(comparisons):
             # Get selected comparisons
             selected_comparisons = [comparisons[n-1] for n in numbers]
             
-            print(f"\n📋 Selected {len(selected_comparisons)} comparisons:")
+            print(f"\n Selected {len(selected_comparisons)} comparisons:")
             for i, comp in enumerate(selected_comparisons, 1):
                 print(f"   {i}) {comp}")
             
@@ -616,7 +616,7 @@ def select_by_numbers(comparisons):
                 continue
                 
         except ValueError:
-            print("❌ Invalid input. Please enter numbers separated by commas (e.g., 1,8,9,4)")
+            print("  Invalid input. Please enter numbers separated by commas (e.g., 1,8,9,4)")
             continue
 
 def select_by_range(comparisons):
@@ -630,7 +630,7 @@ def select_by_range(comparisons):
         
         try:
             if '-' not in user_input:
-                print("❌ Please use format: start-end (e.g., 1-10)")
+                print(" Please use format: start-end (e.g., 1-10)")
                 continue
             
             start, end = user_input.split('-')
@@ -639,13 +639,13 @@ def select_by_range(comparisons):
             
             # Validate range
             if start < 1 or end > len(comparisons) or start > end:
-                print(f"❌ Invalid range. Valid range: 1-{len(comparisons)}")
+                print(f" Invalid range. Valid range: 1-{len(comparisons)}")
                 continue
             
             # Get selected comparisons
             selected_comparisons = comparisons[start-1:end]
             
-            print(f"\n📋 Selected comparisons {start}-{end} ({len(selected_comparisons)} total):")
+            print(f"\n Selected comparisons {start}-{end} ({len(selected_comparisons)} total):")
             for i, comp in enumerate(selected_comparisons, start):
                 print(f"   {i}) {comp}")
             
@@ -657,7 +657,7 @@ def select_by_range(comparisons):
                 continue
                 
         except ValueError:
-            print("❌ Invalid input. Please use format: start-end (e.g., 1-10)")
+            print(" Invalid input. Please use format: start-end (e.g., 1-10)")
             continue
 
 def define_comparisons(metadata_info, exp_design):
@@ -685,7 +685,7 @@ def define_comparisons(metadata_info, exp_design):
     choice = input("Select comparison type (1/2/3/4/0): ")
     
     if choice == '0':
-        print("🚪 Exiting setup...")
+        print(" Exiting setup...")
         exit(0)
     
     if choice == '1':
@@ -774,10 +774,10 @@ def define_comparisons(metadata_info, exp_design):
         for i in range(len(combo_options)):
             for j in range(i+1, len(combo_options)):
                 comparisons.append(f"{combo_options[i]['string']} vs {combo_options[j]['string']}")
-        print(f"✅ Generated {len(comparisons)} pairwise comparisons")
+        print(f" Generated {len(comparisons)} pairwise comparisons")
     
     # Show final comparisons
-    print(f"\n📋 Generated {len(comparisons)} comparisons:")
+    print(f"\n Generated {len(comparisons)} comparisons:")
     for i, comp in enumerate(comparisons):
         print(f"   {i+1:2d}) {comp}")
     
@@ -797,7 +797,7 @@ def create_universal_config():
     # Step 1: Detect multiple datasets
     data_info = detect_multi_dataset_structure()
     if data_info['datasets_found'] == 0:
-        print("❌ No valid datasets found")
+        print(" No valid datasets found")
         return None
     
     # Step 2: Select dataset
@@ -836,7 +836,7 @@ def create_universal_config():
     # Step 6.5: Validate sample matching
     sample_id_col = exp_design['sample_id_column']
     if not validate_sample_matching(selected_files['counts'], selected_files['metadata'], sample_id_col):
-        print("❌ Sample mismatch detected. Please check your files.")
+        print(" Sample mismatch detected. Please check your files.")
         return None
     
     # Step 7: Get analysis parameters
@@ -893,7 +893,7 @@ def save_configuration(config, study_name):
     with open(config_filename, 'w') as f:
         yaml.safe_dump(save_config, f, default_flow_style=False, indent=2)
     
-    print(f"✅ Configuration saved to: {config_filename}")
+    print(f" Configuration saved to: {config_filename}")
     
     # Also save a summary text file
     summary_file = config_dir / f"config_summary_{safe_study_name}.txt"
@@ -930,7 +930,7 @@ def save_configuration(config, study_name):
             for col in config['deleted_columns']:
                 f.write(f"  - {col}\n")
     
-    print(f"✅ Configuration summary saved to: {summary_file}")
+    print(f" Configuration summary saved to: {summary_file}")
     return str(config_filename)
 
 def display_configuration_summary(config, config_file):
@@ -939,15 +939,15 @@ def display_configuration_summary(config, config_file):
     print(" CONFIGURATION COMPLETE")
     print("="*60)
     
-    print(f"\n📊 Study: {config['study_name']}")
-    print(f"📁 Configuration file: {config_file}")
+    print(f"\n Study: {config['study_name']}")
+    print(f" Configuration file: {config_file}")
     
-    print(f"\n📂 Input Files:")
+    print(f"\n Input Files:")
     print(f"   Count data: {Path(config['input_files']['counts']).name}")
     print(f"   Metadata: {Path(config['input_files']['metadata']).name}")
     print(f"   Metadata type: {config['input_files']['metadata_type']}")
     
-    print(f"\n⚙️  Experimental Design:")
+    print(f"\n  Experimental Design:")
     print(f"   Sample ID: {config['experimental_design']['sample_id_column']}")
     print(f"   Primary factor: {config['experimental_design']['primary_factor']}")
     if config['experimental_design']['additional_factors']:
@@ -955,14 +955,14 @@ def display_configuration_summary(config, config_file):
     if config['experimental_design']['batch_factor']:
         print(f"   Batch factor: {config['experimental_design']['batch_factor']}")
     
-    print(f"\n📊 Analysis Settings:")
+    print(f"\n Analysis Settings:")
     params = config['analysis_parameters']
     print(f"   P-value threshold: {params['pvalue_threshold']}")
     print(f"   Adjusted p-value threshold: {params['padj_threshold']}")
     print(f"   Log fold-change threshold: {params['logfc_threshold']}")
     print(f"   Minimum counts: {params['min_counts']}")
     
-    print(f"\n🔬 Comparisons: {len(config['comparisons'])} total")
+    print(f"\n Comparisons: {len(config['comparisons'])} total")
     if len(config['comparisons']) <= 10:
         for i, comp in enumerate(config['comparisons'], 1):
             print(f"   {i:2d}) {comp}")
@@ -972,7 +972,7 @@ def display_configuration_summary(config, config_file):
         print(f"   ... and {len(config['comparisons']) - 5} more")
     
     if config['deleted_columns']:
-        print(f"\n🗑️  Deleted columns: {len(config['deleted_columns'])}")
+        print(f"\n   Deleted columns: {len(config['deleted_columns'])}")
         if len(config['deleted_columns']) <= 5:
             for col in config['deleted_columns']:
                 print(f"   - {col}")
@@ -981,9 +981,9 @@ def display_configuration_summary(config, config_file):
                 print(f"   - {col}")
             print(f"   ... and {len(config['deleted_columns']) - 3} more")
     
-    print(f"\n🎉 Setup complete! Ready to run the pipeline.")
-    print(f"📋 Review configuration file: {config_file}")
-    print(f"🚀 Run pipeline with: nextflow run main.nf --{config['study_name']}=true -profile standard")
+    print(f"\n  Setup complete! Ready to run the pipeline.")
+    print(f"  Review configuration file: {config_file}")
+    print(f" Run pipeline with: nextflow run main.nf --{config['study_name']}=true -profile standard")
 
 def validate_configuration(config):
     """Validate the generated configuration"""
@@ -1027,30 +1027,30 @@ def main():
         # Create configuration
         config = create_universal_config()
         if config is None:
-            print("❌ Configuration setup failed")
+            print(" Configuration setup failed")
             return 1
         
         # Validate configuration
         errors, warnings = validate_configuration(config)
         if errors:
-            print(f"\n❌ Configuration errors found:")
+            print(f"\n Configuration errors found:")
             for error in errors:
                 print(f"   - {error}")
             return 1
         
         if warnings:
-            print(f"\n⚠️  Configuration warnings:")
+            print(f"\n Configuration warnings:")
             for warning in warnings:
                 print(f"   - {warning}")
         
-        print(f"\n🎉 Configuration setup completed successfully!")
+        print(f"\n Configuration setup completed successfully!")
         return 0
         
     except KeyboardInterrupt:
-        print(f"\n\n⚠️  Setup interrupted by user")
+        print(f"\n\n Setup interrupted by user")
         return 1
     except Exception as e:
-        print(f"\n❌ Unexpected error: {e}")
+        print(f"\n Unexpected error: {e}")
         import traceback
         traceback.print_exc()
         return 1
