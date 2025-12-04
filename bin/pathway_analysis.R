@@ -275,7 +275,7 @@ prepare_ranks <- function(deseq_result) {
     return(ranks)
 }
 
-# Enhanced function to add pathway metadata and enrichment information
+# Function to add pathway metadata and enrichment information
 enhance_pathway_results <- function(results_df, collection_name, contrast_name, ranks) {
     if (nrow(results_df) == 0) return(results_df)
     # Add basic metadata
@@ -655,7 +655,7 @@ cat("Processing all found contrast directories\n")
 for (contrast_dir in contrast_dirs) {
     contrast_name <- basename(contrast_dir)
     
-    # Skip if directory name suggests it's not a contrast
+    # Skip if the directory name suggests it's not a contrast
     if (contrast_name %in% c("03_Differential_Expression_&_Pathway_Analysis", "results", "output")) {
         next
     }
@@ -824,7 +824,7 @@ final_report <- paste(
     "- Comprehensive summary statistics",
     "- Global analysis across all contrasts",
     "",
-    "Analysis completed successfully!",
+    "Analysis completed successfully!"
     "",
     sep = "\n"
 )
@@ -835,19 +835,19 @@ writeLines(final_report, file.path(args$output_dir, "pathway_analysis_final_repo
 cat("\n" + "="*80)
 cat("\n 🧬 ENHANCED PATHWAY ANALYSIS COMPLETED SUCCESSFULLY!")
 cat("\n" + "="*80)
-cat(sprintf("\n📊 Summary:\n"))
-cat(sprintf("   ✅ Contrasts processed: %d/%d\n", successful_contrasts, length(contrast_dirs)))
-cat(sprintf("   📁 Results organized by contrast and collection\n"))
-cat(sprintf("   📋 Global summaries created\n"))
+cat(sprintf("\n Summary:\n"))
+cat(sprintf("   Contrasts processed: %d/%d\n", successful_contrasts, length(contrast_dirs)))
+cat(sprintf("   Results organized by contrast and collection\n"))
+cat(sprintf("   Global summaries created\n"))
 
 if (length(failed_contrasts) > 0) {
     cat(sprintf("   ⚠️  Failed contrasts: %d\n", length(failed_contrasts)))
     cat("   Failed contrast names:", paste(failed_contrasts, collapse = ", "), "\n")
 }
 
-cat(sprintf("\n📂 Results location: %s\n", args$output_dir))
-cat(sprintf("📄 Final report: pathway_analysis_final_report.txt\n"))
-cat(sprintf("🎯 Analysis features: Separate collection CSVs, enhanced annotations, global summaries\n"))
+cat(sprintf("\n Results location: %s\n", args$output_dir))
+cat(sprintf("Final report: pathway_analysis_final_report.txt\n"))
+cat(sprintf("Analysis features: Separate collection CSVs, enhanced annotations, global summaries\n"))
 
 cat("\n" + "="*80 + "\n")
 
