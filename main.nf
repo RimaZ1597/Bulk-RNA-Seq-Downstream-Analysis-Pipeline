@@ -35,36 +35,36 @@ def setDatasetParameters() {
     resolvedParams.study_name = params.study_name ?: 'default_study'
     
     // Check for dataset flags and override if not explicitly set
-    if (params.LAMTOR_KD) {
-        if (!params.counts) resolvedParams.counts = 'data/LAMTOR_KD/raw_counts.csv'
-        if (!params.metadata) resolvedParams.metadata = 'data/LAMTOR_KD/metadata.csv'
-        if (!params.config_yaml || params.config_yaml == 'conf/analysis_config.yaml') {
-            resolvedParams.config_yaml = 'conf/analysis_config_LAMTOR_KD.yaml'
+    if (params.dataset1) {
+        if (!params.counts) resolvedParams.counts = 'data/datsaset1/raw_counts.csv'
+        if (!params.metadata) resolvedParams.metadata = 'data/datsaset1/metadata.csv'
+        if (!params.config_yaml || params.config_yaml == 'conf/datsaset1/analysis_config.yaml') {
+            resolvedParams.config_yaml = 'conf/analysis_config_data.yaml'
         }
         if (!params.study_name || params.study_name == 'default_study') {
-            resolvedParams.study_name = 'LAMTOR_KD'
+            resolvedParams.study_name = 'datsaset1'
         }
-        log.info "🎯 Using LAMTOR_KD dataset"
-    } else if (params.REPSOX) {
-        if (!params.counts) resolvedParams.counts = 'data/REPSOX/raw_counts.csv'
-        if (!params.metadata) resolvedParams.metadata = 'data/REPSOX/metadata.csv'
+        log.info "Using datsaset1."
+    } else if (params.dataset2) {
+        if (!params.counts) resolvedParams.counts = 'data/datsaset2/raw_counts.csv'
+        if (!params.metadata) resolvedParams.metadata = 'data/datsaset2/metadata.csv'
         if (!params.config_yaml || params.config_yaml == 'conf/analysis_config.yaml') {
-            resolvedParams.config_yaml = 'conf/analysis_config_REPSOX.yaml'
+            resolvedParams.config_yaml = 'conf/analysis_config_datsaset2.yaml'
         }
         if (!params.study_name || params.study_name == 'default_study') {
-            resolvedParams.study_name = 'REPSOX'
+            resolvedParams.study_name = 'datsaset2'
         }
-        log.info "🎯 Using REPSOX dataset"
-    } else if (params.Adipose_Endothelial_Cell_Flow) {
-        if (!params.counts) resolvedParams.counts = 'data/Adipose_Endothelial_Cell_Flow/raw_counts.csv'
-        if (!params.metadata) resolvedParams.metadata = 'data/Adipose_Endothelial_Cell_Flow/metadata.csv'
+        log.info "Using datsaset2."
+    } else if (params.dataset3) {
+        if (!params.counts) resolvedParams.counts = 'data/dataset3/raw_counts.csv'
+        if (!params.metadata) resolvedParams.metadata = 'data/dataset3/metadata.csv'
         if (!params.config_yaml || params.config_yaml == 'conf/analysis_config.yaml') {
-            resolvedParams.config_yaml = 'conf/analysis_config_Adipose_Endothelial_Cell_Flow.yaml'
+            resolvedParams.config_yaml = 'conf/dataset3.yaml'
         }
         if (!params.study_name || params.study_name == 'default_study') {
-            resolvedParams.study_name = 'Adipose_Endothelial_Cell_Flow'
+            resolvedParams.study_name = 'dataset3'
         }
-        log.info "🎯 Using Adipose_Endothelial_Cell_Flow dataset"
+        log.info "Using dataset3"
     }
     
     return resolvedParams
