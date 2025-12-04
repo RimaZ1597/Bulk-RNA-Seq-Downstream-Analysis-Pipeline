@@ -20,6 +20,6 @@ workflow {
     
     // Output information
     DESEQ2_ANALYSIS.out.log.view { log_file ->
-        "✅ DESeq2 analysis completed for study: ${params.study_name} (CSV outputs, organized by contrast)"
+        "DESeq2 analysis completed for study: ${params.study_name} (CSV outputs, organized by contrast)"
     }
 }
