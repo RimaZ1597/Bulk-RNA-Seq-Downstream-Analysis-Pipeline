@@ -1,7 +1,9 @@
 # Bulk-RNA-Seq-Downstream-Analysis-Pipeline
 This pipeline performs reproducible RNA-Seq downstream analysis using DESeq2 with optional batch correction (ComBat-Seq), power analysis, differential expression, and pathway enrichment — all in a modular, containerised Nextflow workflow.
 
-Features
+____
+
+# Features
 
 📦 Containerised with Docker/Singularity
 
