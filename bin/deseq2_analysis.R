@@ -314,7 +314,7 @@ cat("Results organized by contrast in separate folders\n")
 cat("Successful comparisons:", successful_comparisons, "/", length(comparisons), "\n")
 
 if (failed_comparisons > 0) {
-    cat("⚠️ ", failed_comparisons, "comparisons failed - check the log for details\n")
+    cat(" failed_comparisons, "comparisons failed - check the log for details\n")
 }
 
 cat("Results directory: 03_Differential_Expression_&_Pathway_Analysis/\n")
