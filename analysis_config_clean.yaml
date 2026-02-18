@@ -1,4 +1,4 @@
-project_name: "PLX060659_Data_Analysis"
+project_name: "Experiment_ID_Data_Analysis"
 
 input_files:
   counts: "interactive_setup/data/counts.csv"
