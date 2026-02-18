@@ -1,7 +1,7 @@
-project_name: PLX182687
+project_name:
 input_files:
-  counts: data/PLX182687/counts.csv
-  metadata: data/PLX182687/metadata.csv
+  counts: data/counts.csv
+  metadata: data/metadata.csv
 experimental_design:
   primary_factor: shear_stress
   batch_factor: donor
