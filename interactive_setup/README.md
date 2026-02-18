@@ -13,8 +13,8 @@ interactive_setup/
 ├── config_summary.txt    # Human-readable config summary
 ├── pluto_token.txt       # Pluto.jl authentication token
 ├── data/                 # LOCAL data folder (for wizard testing)
-│   ├── PLX182687/        # Sample datasets for configuration
-│   ├── PLX007704/
+│   ├── Experiment_ID/        # Sample datasets for configuration
+│   ├── Experiment_ID/
 │   └── *.csv             # Individual test files
 └── results/              # Test analysis outputs
 ```
