@@ -1,1 +1,346 @@
+# Modules/Local Directory - Nextflow DSL2 Modules
 
+## Purpose
+This directory contains custom Nextflow DSL2 modules for the BulkRNAseq pipeline. Each module wraps a specific analysis step and follows nf-core module conventions for reusability and standardization.
+
+## Directory Structure
+```
+modules/local/
+├── combat_seq/         # Batch effect correction module
+│   └── main.nf
+├── limma/             # Differential expression analysis module
+│   └── main.nf
+├── pathway_analysis/   # Pathway enrichment analysis module
+│   └── main.nf
+└── power_analysis/    # Statistical power analysis module
+    └── main.nf
+```
+
+## Module Overview
+
+### 1. COMBATSEQ Module (`combat_seq/main.nf`)
+**Purpose**: Batch effect correction using ComBat-seq
+
+**Process**: `COMBATSEQ`
+- **Label**: `process_medium`
+- **Script**: `bin/combat_seq.R`
+- **Container**: R environment with sva, ComBat-seq packages
+
+**Input**:
+```groovy
+tuple val(meta), path(counts), path(metadata), path(config_file), val(experiment_id), val(outdir)
+```
+
+**Output**:
+```groovy
+tuple val(meta), path("combatseq_corrected_counts.csv"), path("combatseq_metadata.csv"), emit: corrected
+tuple val(meta), path("combatseq_original_counts.csv"), emit: original  
+tuple val(meta), path("combatseq_log.txt"), emit: log
+tuple val(meta), path("combatseq_applied.txt"), emit: flag
+```
+
+**Features**:
+- Automatic batch effect detection
+- Gene filtering based on configuration
+- Graceful handling when batch correction not needed
+- Quality control metrics and logging
+
+### 2. LIMMA Module (`limma/main.nf`)
+**Purpose**: Differential expression analysis using limma-voom
+
+**Process**: `LIMMA_ANALYSIS`
+- **Label**: `process_high`
+- **Script**: `bin/limma.R`
+- **Container**: R environment with limma, edgeR packages
+
+**Input**:
+```groovy
+tuple val(meta), path(corrected_counts), path(metadata), path(config_file), val(experiment_id), val(outdir)
+```
+
+**Output**:
+```groovy
+tuple val(meta), path("normalized_counts_*.csv"), emit: normalized
+tuple val(meta), path("analysis_summary.csv"), emit: summary
+tuple val(meta), path("all_contrasts_combined_results.csv"), emit: combined
+tuple val(meta), path("*/"), emit: contrasts
+tuple val(meta), path("*.rds"), emit: robjects
+```
+
+**Features**:
+- Multi-factor experimental design support
+- TMM normalization with voom transformation
+- Contrast-specific result folders
+- Comprehensive output files for downstream analysis
+
+### 3. PATHWAY_ANALYSIS Module (`pathway_analysis/main.nf`)
+**Purpose**: Pathway enrichment analysis using FGSEA
+
+**Process**: `PATHWAY_ANALYSIS`
+- **Label**: `process_medium`
+- **Script**: `bin/pathway_analysis.R`
+- **Container**: R environment with fgsea, msigdbr packages
+
+**Input**:
+```groovy
+tuple val(meta), path(limma_results), val(contrast_name), path(subsystem_genes), path(config_file), val(experiment_id), val(outdir)
+```
+
+**Output**:
+```groovy
+tuple val(meta), path("ranked_gene_list.csv"), emit: ranked_genes
+tuple val(meta), path("*_pathways.csv"), emit: pathways
+tuple val(meta), path("pathway_analysis_summary.csv"), emit: summary
+```
+
+**Features**:
+- HumanGEM metabolic subsystem analysis
+- MSigDB pathway collections (Hallmark, KEGG, GO, etc.)
+- FGSEA-based enrichment with FDR correction
+- Comprehensive pathway database coverage
+
+### 4. POWER_ANALYSIS Module (`power_analysis/main.nf`)
+**Purpose**: Statistical power analysis for experimental design
+
+**Process**: `RNASEQPOWER`
+- **Label**: `process_low`
+- **Script**: `bin/power_analysis.R`
+- **Container**: R environment with RNASeqPower package
+
+**Input**:
+```groovy
+tuple val(meta), path(original_counts), path(corrected_counts), path(metadata), path(config_file), val(experiment_id), val(outdir)
+```
+
+**Output**:
+```groovy
+tuple val(meta), path("power_*.csv"), emit: power_analysis
+tuple val(meta), path("recommended_sample_sizes.csv"), emit: recommendations
+tuple val(meta), path("power_analysis_log.txt"), emit: log
+```
+
+**Features**:
+- Before/after batch correction comparison
+- Sample size recommendations for future studies
+- Effect size and power level analysis
+- CV (coefficient of variation) assessment
+
+## Module Design Principles
+
+### DSL2 Best Practices
+1. **Single Responsibility**: Each module performs one specific analysis step
+2. **Standardized Interface**: Consistent input/output patterns across modules
+3. **Error Handling**: Robust error handling and logging
+4. **Resource Management**: Appropriate resource allocation per process
+
+### Input/Output Patterns
+```groovy
+// Standard input pattern
+tuple val(meta), path(input_files), path(config), val(params)
+
+// Standard output pattern  
+tuple val(meta), path(output_files), emit: channel_name
+```
+
+### Metadata Structure
+```groovy
+meta = [
+    id: "PLX182687",           // Project identifier
+    single_end: false,         // Paired-end data flag
+    strandedness: "unstranded" // Library strandedness
+]
+```
+
+### Configuration Integration
+Each module reads parameters from:
+1. **analysis_config.yaml**: Generated by setup.py wizard
+2. **nextflow.config**: Pipeline-level defaults
+3. **modules.config**: Module-specific overrides
+
+## Module Usage in Workflows
+
+### Sequential Workflow Pattern
+```groovy
+// In workflows/limma.nf
+include { COMBATSEQ } from '../modules/local/combat_seq/main'
+include { LIMMA_ANALYSIS } from '../modules/local/limma/main'
+include { PATHWAY_ANALYSIS } from '../modules/local/pathway_analysis/main'
+include { RNASEQPOWER } from '../modules/local/power_analysis/main'
+
+workflow LIMMA_PIPELINE {
+    take:
+    input_channel
+    
+    main:
+    // Batch correction
+    COMBATSEQ(input_channel)
+    
+    // Differential expression
+    LIMMA_ANALYSIS(COMBATSEQ.out.corrected)
+    
+    // Pathway analysis (per contrast)
+    PATHWAY_ANALYSIS(LIMMA_ANALYSIS.out.contrasts)
+    
+    // Power analysis
+    RNASEQPOWER(COMBATSEQ.out.original, COMBATSEQ.out.corrected)
+    
+    emit:
+    results = LIMMA_ANALYSIS.out.combined
+    pathways = PATHWAY_ANALYSIS.out.pathways
+    power = RNASEQPOWER.out.power_analysis
+}
+```
+
+### Parallel Processing
+```groovy
+// Process multiple contrasts in parallel
+LIMMA_ANALYSIS.out.contrasts
+    .flatten()
+    .map { contrast -> [meta, contrast, contrast.name] }
+    .set { contrast_channel }
+
+PATHWAY_ANALYSIS(contrast_channel)
+```
+
+## Resource Requirements
+
+### Default Allocations
+- **COMBATSEQ**: 2 CPUs, 12 GB memory, 6 hours
+- **LIMMA_ANALYSIS**: 4 CPUs, 16 GB memory, 8 hours  
+- **PATHWAY_ANALYSIS**: 2 CPUs, 8 GB memory, 4 hours
+- **RNASEQPOWER**: 1 CPU, 4 GB memory, 2 hours
+
+### Scaling with Data Size
+```groovy
+// In modules.config
+process {
+    withName: 'LIMMA_ANALYSIS' {
+        cpus   = { check_max( 4 * task.attempt, 'cpus' ) }
+        memory = { check_max( 16.GB * task.attempt, 'memory' ) }
+        time   = { check_max( 8.h * task.attempt, 'time' ) }
+    }
+}
+```
+
+## Container Management
+
+### Container Strategy
+```groovy
+// Use consistent container across modules
+container = "rvwx/rnaseq-limma:latest"
+
+// Or module-specific containers
+process {
+    withName: 'COMBATSEQ' {
+        container = "rvwx/rnaseq-combat:latest"
+    }
+    withName: 'LIMMA_ANALYSIS' {
+        container = "rvwx/rnaseq-limma:latest"
+    }
+}
+```
+
+### Required Software
+- **Base**: R ≥ 4.0, Python ≥ 3.8
+- **R Packages**: limma, edgeR, sva, fgsea, msigdbr, RNASeqPower
+- **System**: curl, wget for database downloads
+
+## Error Handling and Debugging
+
+### Common Error Patterns
+1. **Memory Issues**: Increase memory allocation in modules.config
+2. **Container Problems**: Verify container availability and permissions
+3. **Input File Issues**: Check file formats and paths
+4. **R Package Errors**: Verify container has required packages
+
+### Debugging Commands
+```bash
+# Check module execution
+nextflow run main.nf -with-trace -with-report
+
+# Debug specific module
+nextflow run main.nf -entry COMBATSEQ -with-debug
+
+# Resume failed execution
+nextflow run main.nf -resume
+```
+
+### Log Files
+- **Process logs**: `work/*/**.command.log`
+- **Module outputs**: Published to `results/` directories
+- **Pipeline reports**: `pipeline_info/` directory
+
+## Module Development Guidelines
+
+### Adding New Modules
+1. **Create Directory**: `modules/local/new_module/`
+2. **Write main.nf**: Follow DSL2 conventions
+3. **Test Module**: Use test data and profiles
+4. **Document**: Add to this README and pipeline docs
+5. **Integrate**: Include in appropriate workflows
+
+### Module Template
+```groovy
+process NEW_MODULE {
+    tag "${meta.id}"
+    label 'process_medium'
+    
+    publishDir "${params.outdir}/new_module", mode: 'copy'
+    
+    input:
+    tuple val(meta), path(input_files)
+    
+    output:
+    tuple val(meta), path("*.csv"), emit: results
+    tuple val(meta), path("*.log"), emit: log
+    
+    script:
+    """
+    Rscript ${projectDir}/bin/new_analysis.R \\
+        --input ${input_files} \\
+        --output . \\
+        --meta_id ${meta.id}
+    """
+}
+```
+
+## Testing and Validation
+
+### Module Testing
+```bash
+# Test individual module
+nextflow run modules/local/combat_seq/main.nf -entry test
+
+# Test with minimal data
+nextflow run main.nf -profile test,docker
+
+# Validate outputs
+nextflow run main.nf -profile test --validate_outputs
+```
+
+### Integration Testing
+- **Unit Tests**: Individual module functionality
+- **Integration Tests**: Full workflow execution
+- **Regression Tests**: Output consistency across versions
+- **Performance Tests**: Resource usage optimization
+
+## Version Information
+
+- **Module Standard**: nf-core DSL2 compatible
+- **Nextflow Version**: ≥22.10.1
+- **Container Strategy**: Docker/Singularity
+- **Last Updated**: December 2025
+
+## Support and Maintenance
+
+### Module Updates
+1. **Version Control**: Track changes in git
+2. **Backward Compatibility**: Maintain stable interfaces
+3. **Documentation**: Update README with changes
+4. **Testing**: Validate after modifications
+
+### Getting Help
+- **Module Issues**: Check process logs in work directory
+- **Resource Problems**: Adjust allocations in modules.config
+- **Container Issues**: Verify image availability and versions
+- **Integration**: Consult workflow documentation in workflows/
