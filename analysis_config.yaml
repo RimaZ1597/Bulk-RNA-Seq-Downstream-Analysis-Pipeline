@@ -34,7 +34,7 @@ analysis_parameters:
     alpha: 0.05
     min_count: 10
     min_prop: 0.5
-  results_structure: data/PLX182687/analysis_results
+  results_structure: data/analysis_results
 filtering_config:
   method: limma-voom
   type: cpm
