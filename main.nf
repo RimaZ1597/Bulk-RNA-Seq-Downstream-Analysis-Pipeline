@@ -43,7 +43,7 @@ def helpMessage() {
     Example:
       nextflow run main.nf \\
         --config_file interactive_setup/analysis_config.yaml \\
-        --project_name PLX182687
+        --project_name
 
     ================================================================================
     """.stripIndent()
@@ -75,9 +75,9 @@ def create_contrast_mapping(contrast_name) {
     Example:
         Input:  "donor:19503_shear_stress:High (15 dynes/cm2)_vs_Static (0 dynes/cm2)"
         Output: 
-            [0] original: "donor:19503_shear_stress:High (15 dynes/cm2)_vs_Static (0 dynes/cm2)"
-            [1] display:  "donor 19503 shear_stress High (15 dynes/cm2) vs Static (0 dynes/cm2)"
-            [2] safe:     "donor_19503_shear_stress_High_15_dynes_cm2_vs_Static_0_dynes_cm2"
+            [0] original: "donor:19_shear_stress:High (15 dynes/cm2)_vs_Static (0 dynes/cm2)"
+            [1] display:  "donor 19 shear_stress High (15 dynes/cm2) vs Static (0 dynes/cm2)"
+            [2] safe:     "donor_19_shear_stress_High_15_dynes_cm2_vs_Static_0_dynes_cm2"
     """
     def display = contrast_name.replaceAll(":", " ").replaceAll("_vs_", " vs ")
     
