@@ -1,0 +1,76 @@
+project_name: PLX182687
+input_files:
+  counts: data/PLX182687/counts.csv
+  metadata: data/PLX182687/metadata.csv
+experimental_design:
+  primary_factor: shear_stress
+  batch_factor: donor
+  additional_factors:
+  - cell_type
+  - plate_number
+selected_analyses:
+- Batch Correction
+- Power Analysis
+- Differential Expression
+- Pathway Analysis
+analysis_parameters:
+  de_tool: limma
+  perform_batch_correction: true
+  perform_power_analysis: true
+  perform_differential_expression: true
+  perform_pathway_analysis: true
+  metadata_columns:
+    condition: shear_stress
+    batch: donor
+  power_analysis:
+    effect_sizes:
+    - 1.25
+    - 1.5
+    - 1.75
+    - 2.0
+    power_levels:
+    - 0.8
+    - 0.9
+    alpha: 0.05
+    min_count: 10
+    min_prop: 0.5
+  results_structure: data/PLX182687/analysis_results
+filtering_config:
+  method: limma-voom
+  type: cpm
+  threshold: 10
+  min_samples: &id001 !!python/object/apply:numpy._core.multiarray.scalar
+  - !!python/object/apply:numpy.dtype
+    args:
+    - i8
+    - false
+    - true
+    state: !!python/tuple
+    - 3
+    - <
+    - null
+    - null
+    - null
+    - -1
+    - -1
+    - 0
+  - !!binary |
+    CwAAAAAAAAA=
+  logic: CPM >= 10 in >= 11 samples
+  description: Keep genes with CPM >= 10 in at least 11 samples
+normalization_config:
+  method: CPM
+  note: 'Current: CPM normalization. Future: TMM, RLE, upperquartile'
+  future_options:
+  - TMM
+  - RLE
+  - upperquartile
+dataset_characteristics:
+  total_samples: 52
+  smallest_group_size: *id001
+  design_complexity: N/A
+  applied_rule: N/A
+comparisons:
+- donor:19503_vs_21452_shear_stress:High (15 dynes/cm2)
+- donor:19503_vs_21452_shear_stress:Static (0 dynes/cm2)
+- donor:19503_shear_stress:Medium (10 dynes/cm2)_vs_Static (0 dynes/cm2)

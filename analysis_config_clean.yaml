@@ -1,0 +1,56 @@
+project_name: "PLX060659_Data_Analysis"
+
+input_files:
+  counts: "interactive_setup/data/PLX060659/counts.csv"
+  metadata: "interactive_setup/data/PLX060659/metadata.csv"
+
+experimental_design:
+  primary_factor: "group"
+  batch_factor: "condition"
+  additional_factors:
+    - "timepoint"
+    - "tissue"
+
+selected_analyses:
+  - "Batch Correction"
+  - "Power Analysis"
+  - "Differential Expression"
+  - "Pathway Analysis"
+
+analysis_parameters:
+  de_tool: "limma"
+  perform_batch_correction: true
+  perform_power_analysis: true
+  perform_differential_expression: true
+  perform_pathway_analysis: true
+  pathway_methods:
+    - "reactome"
+    - "kegg"
+    - "fgsea"
+    - "humangem"
+  results_structure: "results/REPSOX_Data_Analysis"
+
+filtering_config:
+  method: "limma-voom"
+  type: "cpm"
+  threshold: 10
+  min_samples: 1
+  logic: "CPM >= 10 in >= 1 samples"
+  description: "Keep genes with CPM >= 10 in at least 1 samples"
+
+normalization_config:
+  method: "CPM"
+  note: "Current: CPM normalization. Future: TMM, RLE, upperquartile"
+  future_options:
+    - "TMM"
+    - "RLE"
+    - "upperquartile"
+
+dataset_characteristics:
+  total_samples: 18
+  smallest_group_size: 1
+  design_complexity: "N/A"
+  applied_rule: "N/A"
+
+comparisons:
+  - "tissue:Hepatocytes_vs_Stellate Cells_replicate:1"
