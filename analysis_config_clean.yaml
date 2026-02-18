@@ -1,8 +1,8 @@
 project_name: "PLX060659_Data_Analysis"
 
 input_files:
-  counts: "interactive_setup/data/PLX060659/counts.csv"
-  metadata: "interactive_setup/data/PLX060659/metadata.csv"
+  counts: "interactive_setup/data/counts.csv"
+  metadata: "interactive_setup/data/metadata.csv"
 
 experimental_design:
   primary_factor: "group"
@@ -28,7 +28,7 @@ analysis_parameters:
     - "kegg"
     - "fgsea"
     - "humangem"
-  results_structure: "results/REPSOX_Data_Analysis"
+  results_structure: "results/Experiment_ID_Data_Analysis"
 
 filtering_config:
   method: "limma-voom"
