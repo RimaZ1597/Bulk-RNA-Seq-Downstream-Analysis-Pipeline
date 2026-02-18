@@ -400,7 +400,6 @@ ls -la pipeline_info/
 2. **Create Branch**: Feature-specific development branches
 3. **Test Changes**: Validate with test datasets
 4. **Document Updates**: Update relevant README files
-5. **Submit PR**: Pull request with clear description
 
 ### Adding New Features
 - **New Analysis Steps**: Add modules in `modules/local/`
@@ -412,36 +411,13 @@ ls -la pipeline_info/
 - **Nextflow**: Follow nf-core DSL2 conventions
 - **R Code**: Use tidyverse and Bioconductor best practices
 - **Python Code**: Follow PEP 8 style guidelines
-- **Documentation**: Clear, comprehensive, example-driven
 
 ## 📄 Citation
 
-If you use this pipeline in your research, please cite:
-
-```
-BulkRNAseq Pipeline - Limma-Voom Framework
-https://github.com/your-org/BulkRNAseq_Pipeline_Limma_Copy
-```
-
-Plus the underlying tools:
 - **limma**: Ritchie et al. (2015) Nucleic Acids Research
 - **ComBat-seq**: Zhang et al. (2020) NAR Genomics and Bioinformatics
 - **FGSEA**: Korotkevich et al. (2021) PNAS
 - **Nextflow**: Di Tommaso et al. (2017) Nature Biotechnology
-
-## Support
-
-### Getting Help
-1. **Documentation**: Check relevant README files in subdirectories
-4. **Email Support**: zinjuwadiarima@gmail.com
-
-### Reporting Bugs
-Please include:
-- **System Information**: OS, container system, resource availability
-- **Pipeline Version**: Git commit hash or release version
-- **Input Data**: Description of dataset characteristics
-- **Error Messages**: Complete error logs and stack traces
-- **Reproduction Steps**: Minimal example to reproduce issue
 
 ## 📊 Performance Benchmarks
 
@@ -467,9 +443,6 @@ Please include:
 - ✅ Comprehensive documentation
 
 ### Planned Features
-- 🔄 Additional DE methods (DESeq2, edgeR)
-- 🔄 Enhanced visualizations
-- 🔄 Cloud deployment options
 - 🔄 Automated report generation
 - 🔄 Multi-species support
 
