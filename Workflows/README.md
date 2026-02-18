@@ -210,7 +210,7 @@ tuple val(meta), path(output_files), emit: channel_name
 Metadata is consistently propagated through workflows:
 ```groovy
 meta = [
-    id: "PLX182687",           // Project identifier
+    id: "Experiment_ID",           // Project identifier
     step: "limma",             // Current analysis step
     contrast: "High_vs_Static", // Specific contrast (if applicable)
     timestamp: timestamp        // Processing timestamp
