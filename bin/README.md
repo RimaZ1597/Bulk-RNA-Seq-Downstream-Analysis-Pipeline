@@ -286,7 +286,3 @@ For issues or questions:
 2. Verify input file formats match specifications
 3. Ensure all required R packages are installed
 4. Review configuration file syntax
-
-## License
-
-This pipeline is part of the BulkRNAseq analysis framework developed for comprehensive RNA-seq data analysis in research environments.
